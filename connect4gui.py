@@ -23,6 +23,7 @@ class Grid():
         for r in range(len(self.cells)+1):
             for c in range(len(self.cells)):
                 self.cells[c][r-1] = 0
+        self.drawBoardGui()
 
 
     def addChip(self, player, col):
@@ -52,30 +53,35 @@ class Grid():
 
     def checkWinner(self, player, row, col):
         #HORIZONTAL columns 0-4 not including 4
-        for c in range(0,self.MAX_COLS - 2,1):
+        for c in range(0,4,1):
             if self.cells[row][c] == player and self.cells[row][c+1] == player and self.cells[row][c+2] == player and self.cells[row][c+3] == player:
+                pygame.draw.rect(screen, GREEN, ( (SQUARE_SIZE*c + 10) , int( SQUARE_SIZE*row + SQUARE_SIZE*(3/8) + SQUARE_SIZE) , int(SQUARE_SIZE*4 - 20) , int(SQUARE_SIZE/4) ))
                 return True
                 break
         #VERTICAL WIN
-        for r in range(self.MAX_ROWS, 2,-1):
+        for r in range(5, 2,-1):
             if self.cells[r][col] == player and self.cells[r-1][col] == player and self.cells[r-2][col] == player and self.cells[r-3][col] == player:
+                pygame.draw.rect(screen, GREEN, ( int((SQUARE_SIZE*col + SQUARE_SIZE*(3/8)) ),(SQUARE_SIZE*(r -2) + 10) , (int(SQUARE_SIZE/4)) , (SQUARE_SIZE*4 - 20) ))
                 return True
                 break
         #BRUTE FORCE POSITIVE DIAGONAL
         for r in range(3,6,1):
             for c in range(0,4,1):
                 if self.cells[r][c] == player and self.cells[r-1][c+1] == player and self.cells[r-2][c+2] == player and self.cells[r-3][c+3] == player:
+                    pygame.draw.polygon(screen, GREEN , [ ( int(SQUARE_SIZE*(c)), int(SQUARE_SIZE*(r+2) - 25) ) , ( int(SQUARE_SIZE*(c) +25), int(SQUARE_SIZE*(r+2)) ) , (int(SQUARE_SIZE*(c+4)) , int(SQUARE_SIZE*(r-2) + 25 )) , (int(SQUARE_SIZE*(c+4)-25),  int(SQUARE_SIZE*(r-2))) ])
                     return True
                     break
         #BRUTE FORCE NEGATIVE DIAGONAL
         for r in range(2,-1,-1):
             for c in range(0,4,1):
                 if self.cells[r][c] == player and self.cells[r+1][c+1] == player and self.cells[r+2][c+2] == player and self.cells[r+3][c+3] == player:
+                    pygame.draw.polygon(screen, GREEN , [ ( int(SQUARE_SIZE*(c)+25), int(SQUARE_SIZE*(r+1)) ) , ( int(SQUARE_SIZE*(c)), int(SQUARE_SIZE*(r+1))+25 ) , (int(SQUARE_SIZE*(c+4) -25) , int(SQUARE_SIZE*(r+5) )) , (int(SQUARE_SIZE*(c+4)),  int(SQUARE_SIZE*(r+5) -25) ) ])
                     return True
                     break
         return False
 
     def drawBoardGui(self):
+        screen.fill(BLACK)
         for c in range(self.MAX_COLS +1):
             for r in range(self.MAX_ROWS +2):
                                                 #TOPLEFTx        #TOPLEFTY                  #DIMESIONX   #DIMENSIONY
@@ -88,13 +94,14 @@ class Grid():
         elif player == users[0]:
             pygame.draw.circle(screen, YELLOW, (int((SQUARE_SIZE*col + SQUARE_SIZE/2 )),(int(SQUARE_SIZE*row + SQUARE_SIZE/2 + SQUARE_SIZE))), RADIUS - 2)
 
-
 users = [1,2]
 BLUE = (0,102,255)
 RED = (255,55,0)
 YELLOW = (255,255,50)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+GREEN = (57,234,51)
+
 
 board = Grid()
 pygame.init()
@@ -142,6 +149,7 @@ def main():
                 restartGame(False)
 
             if event.type == pygame.KEYDOWN and event.key == pygame.K_r and won:
+
                 restartGame(True)
 
             if event.type == pygame.MOUSEMOTION and not won:
@@ -165,7 +173,6 @@ def main():
                         won = True
                         pygame.draw.rect(screen, BLACK,(0,0, width, SQUARE_SIZE))
                         messageToScreen("Winner! Press r to replay.", WHITE)
-
                     board.showGrid()
                     pygame.display.update()
                 elif board.isValid(col) == False:
