@@ -116,8 +116,6 @@ RADIUS = int(SQUARE_SIZE/2 - 5)
 myFont = pygame.font.SysFont(None, 50)
 screen = pygame.display.set_mode(size)
 
-clock = pygame.time.Clock()
-
 
 def messageToScreen(msg, color):
     screenText = myFont.render(msg, 1, color)
@@ -144,7 +142,6 @@ def main():
     while playing:
         pygame.display.update()
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 restartGame(False)
 
@@ -179,8 +176,4 @@ def main():
                     pygame.draw.rect(screen, BLACK,(0,0, width, SQUARE_SIZE))
                     messageToScreen("Tie Game! Press r to replay.", WHITE)
                     won = True
-
-
-
-
 main()
